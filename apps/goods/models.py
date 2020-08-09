@@ -50,3 +50,74 @@ class Goods(BaseModel):
     name = models.CharField(max_length=20, verbose_name='商品SPU名称')
     # 富文本类型：带有格式的文本
     detail = ''
+
+    class Meta:
+        db_table = 'df_goods'
+        verbose_name = '商品SPU'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
+
+
+class GoodsImage(BaseModel):
+    """商品图片模型类"""
+    sku = models.ForeignKey('GoodsSKU', on_delete=models.CASCADE, verbose_name='商品')
+    image = models.ImageField(upload_to='goods', verbose_name='图片路径')
+
+    class Meta:
+        db_table = 'df_goods_image'
+        verbose_name = '商品图片'
+        verbose_name_plural = verbose_name
+
+
+class IndexGoodsBanner(BaseModel):
+    """首页轮播商品展示模型类"""
+    sku = models.ForeignKey('GoodsSKU', on_delete=models.CASCADE, verbose_name='商品')
+    image = models.ImageField(upload_to='banner', verbose_name='图片')
+    index = models.SmallIntegerField(default=0, verbose_name='展示顺序')
+
+    class Meta:
+        db_table = 'df_index_banner'
+        verbose_name = '首页轮播商品'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.sku.name
+
+
+class IndexTypeGoodsBanner(BaseModel):
+    """首页分类商品展示模型类"""
+    DISPLAY_TYPE_CHOICES = (
+        (0, '标题'),
+        (1, '图片'),
+    )
+
+    type = models.ForeignKey('GoodsType', on_delete=models.CASCADE, verbose_name='商品类型')
+    sku = models.ForeignKey('GoodsSKU', on_delete=models.CASCADE, verbose_name='商品SKU')
+    display_type = models.SmallIntegerField(default=1, choices=DISPLAY_TYPE_CHOICES, verbose_name='展示类型')
+    index = models.SmallIntegerField(default=1, verbose_name='展示顺序')
+
+    class Meta:
+        db_table = 'df_index_type_goods'
+        verbose_name = '首页分类展示商品'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.sku.name
+
+
+class IndexPromotionBanner(BaseModel):
+    """首页促销活动模型类"""
+    name = models.CharField(max_length=20, verbose_name='活动名称')
+    url = models.CharField(max_length=20, verbose_name='活动链接')
+    image = models.ImageField(upload_to='banner', verbose_name='活动图片')
+    index = models.SmallIntegerField(default=0, verbose_name='展示顺序')
+
+    class Meta:
+        db_table = 'df_index_promotion'
+        verbose_name = '主页促销活动'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
